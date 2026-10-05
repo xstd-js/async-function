@@ -5,6 +5,46 @@ import { AsyncFunction } from './async-function.ts';
 describe('AsyncFunction', () => {
   const NEVER_ABORTED = new AbortController().signal;
 
+  describe('constructor', () => {
+    it('should accept a call function', async () => {
+      const spy = vi.fn(async (_signal: AbortSignal, value: number): Promise<number> => {
+        return value;
+      });
+
+      const fnc = new AsyncFunction<[number], number>(spy);
+
+      await expect(fnc.call(NEVER_ABORTED, 3)).resolves.toBe(3);
+
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy).toHaveBeenNthCalledWith(1, NEVER_ABORTED, 3);
+    });
+
+    it('should accept an AsyncFunction instance and reuse its underlying call function', async () => {
+      const spy = vi.fn(async (signal: AbortSignal, value: number): Promise<number> => {
+        signal.throwIfAborted();
+        return value;
+      });
+
+      const original = new AsyncFunction<[number], number>(spy);
+      const wrapped = new AsyncFunction<[number], number>(original);
+
+      await expect(wrapped.call(NEVER_ABORTED, 3)).resolves.toBe(3);
+
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy).toHaveBeenNthCalledWith(1, NEVER_ABORTED, 3);
+    });
+
+    it('should keep the abortable behaviour when constructed from an AsyncFunction', async () => {
+      const original = new AsyncFunction<[number], number>(async (signal: AbortSignal) => {
+        signal.throwIfAborted();
+        return 3;
+      });
+      const wrapped = new AsyncFunction<[number], number>(original);
+
+      await expect(wrapped.call(AbortSignal.abort('abort'), 3)).rejects.toThrow('abort');
+    });
+  });
+
   describe('static-methods', () => {
     describe('of', () => {
       it('should return the same instance if an AsyncFunction is provided', async () => {
@@ -50,10 +90,12 @@ describe('AsyncFunction', () => {
               sendSignal = signal;
             },
           ),
-          receive: new AsyncFunction<[number], number>(async (signal: AbortSignal): Promise<number> => {
-            await sleep(100, { signal });
-            return 2;
-          }),
+          receive: new AsyncFunction<[number], number>(
+            async (signal: AbortSignal): Promise<number> => {
+              await sleep(100, { signal });
+              return 2;
+            },
+          ),
         });
 
         const controller = new AbortController();
@@ -111,9 +153,11 @@ describe('AsyncFunction', () => {
             return value;
           })
             .transform((fnc) => {
-              return new AsyncFunction<[number], number>(async (signal: AbortSignal, value: number) => {
-                return (await fnc.call(signal, value)) * 2;
-              });
+              return new AsyncFunction<[number], number>(
+                async (signal: AbortSignal, value: number) => {
+                  return (await fnc.call(signal, value)) * 2;
+                },
+              );
             })
             .call(NEVER_ABORTED, 3),
         ).resolves.toBe(6);

@@ -108,10 +108,10 @@ export class AsyncFunction<GArguments extends readonly unknown[], GReturn> {
   /**
    * Creates an instance of the `AsyncFunction` class.
    *
-   * @param {CallAsyncFunction<GArguments, GReturn>} call A function or AsyncFunction to be invoked, which defines the action to perform on invocation.
+   * @param {AsyncFunctionLike<GArguments, GReturn>} call A call function, or an existing `AsyncFunction`, to be invoked, which defines the action to perform on invocation. If an `AsyncFunction` is provided, its underlying call function is reused instead of being wrapped.
    */
-  constructor(call: CallAsyncFunction<GArguments, GReturn>) {
-    this.#call = call;
+  constructor(call: AsyncFunctionLike<GArguments, GReturn>) {
+    this.#call = call instanceof AsyncFunction ? call.#call : call;
   }
 
   /**

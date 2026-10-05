@@ -76,13 +76,21 @@ const data = await fetchJson.call(new AbortController().signal, 'https://example
 #### Constructor
 
 ```ts
-new AsyncFunction<GArguments, GReturn>(call: CallAsyncFunction<GArguments, GReturn>)
+new AsyncFunction<GArguments, GReturn>(call: AsyncFunctionLike<GArguments, GReturn>)
 ```
 
 Creates an instance of the `AsyncFunction` class.
 
 - **Parameters**
-  - `call: CallAsyncFunction<GArguments, GReturn>` — A function (or `AsyncFunction`) to be invoked, which defines the action to perform on invocation. It receives the call's `AbortSignal` as first argument, followed by the call's arguments, and returns the result (or a promise of it).
+  - `call: AsyncFunctionLike<GArguments, GReturn>` — A call function, or an existing `AsyncFunction`, which defines the action to perform on invocation. It receives the call's `AbortSignal` as first argument, followed by the call's arguments, and returns the result (or a promise of it). If an `AsyncFunction` is provided, its underlying call function is reused instead of being wrapped.
+
+```ts
+// from a call function:
+const fnc = new AsyncFunction(async (signal, url: string) => fetch(url, { signal }));
+
+// from an existing AsyncFunction (reuses its underlying call function):
+const copy = new AsyncFunction(fnc);
+```
 
 #### Static methods
 
@@ -181,7 +189,9 @@ Maps and transforms the arguments of the current async function using the provid
 
 ```ts
 const fnc = new AsyncFunction(async (signal, a: number, b: number) => a + b);
-const doubled = fnc.mapArguments((...args: [number]) => [args[0], args[0]] satisfies [number, number]);
+const doubled = fnc.mapArguments(
+  (...args: [number]) => [args[0], args[0]] satisfies [number, number],
+);
 const result = await doubled.call(signal, 21); // 42
 ```
 
@@ -258,8 +268,9 @@ The first call starts the underlying call with its own `AbortController`. Each c
 - **Returns** A new async function sharing concurrent calls with identical keys.
 
 ```ts
-const loadUser = new AsyncFunction(async (signal, id: string) => fetchUser(id, { signal }))
-  .shareConcurentCalls({ keyGenerator: ([id]) => id });
+const loadUser = new AsyncFunction(async (signal, id: string) =>
+  fetchUser(id, { signal }),
+).shareConcurentCalls({ keyGenerator: ([id]) => id });
 
 // 'fetchUser' is called once, both calls await the same result:
 const [a, b] = await Promise.all([loadUser.call(signal, 'a'), loadUser.call(signal, 'a')]);
@@ -267,7 +278,7 @@ const [a, b] = await Promise.all([loadUser.call(signal, 'a'), loadUser.call(sign
 
 #### Types
 
-| Type | Description |
-| --- | --- |
-| `CallAsyncFunction<GArguments, GReturn>` | `(signal: AbortSignal, ...args: GArguments) => PromiseLike<GReturn> \| GReturn` — the shape of the underlying call function. |
+| Type                                     | Description                                                                                                                                  |
+| ---------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| `CallAsyncFunction<GArguments, GReturn>` | `(signal: AbortSignal, ...args: GArguments) => PromiseLike<GReturn> \| GReturn` — the shape of the underlying call function.                 |
 | `AsyncFunctionLike<GArguments, GReturn>` | `AsyncFunction<GArguments, GReturn> \| CallAsyncFunction<GArguments, GReturn>` — accepted by the constructor, `of` and `fromSendAndReceive`. |
