@@ -1,7 +1,7 @@
 import { abortify } from '@xstd/abortable';
+import type { MapFunctionArguments } from '@xstd/map-function';
 import { type AsyncFunctionLike } from './types/async-function-like.ts';
 import { type CallAsyncFunction } from './types/call-async-function.ts';
-import { type MapFunctionArguments } from './types/methods/map-arguments/map-function-arguments.ts';
 import { type ShareConcurentCallsOptions } from './types/methods/share-concurent-calls/share-concurent-calls-options.js';
 import { type AsyncFunctionThenOnFulfilledFunction } from './types/methods/then/async-function.then.on-fulfilled-function.ts';
 import { type AsyncFunctionThenOnRejectedFunction } from './types/methods/then/async-function.then.on-rejected-function.ts';
@@ -143,11 +143,11 @@ export class AsyncFunction<GArguments extends readonly unknown[], GReturn> {
    * Maps and transforms the arguments of the current async function using the provided mapping function.
    *
    * @template GNewArguments The tuple type of the new arguments to be provided to the async function.
-   * @param {MapFunctionArguments<GArguments, GNewArguments>} mapFnc A function that receives the arguments for the new async function and transforms them into arguments for the current async function.
+   * @param {MapFunctionArguments<GNewArguments, GArguments>} mapFnc A function that receives the arguments for the new async function and transforms them into arguments for the current async function.
    * @return {AsyncFunction<GNewArguments, GReturn>} A new async function instance that uses the specified mapping function to map its arguments.
    */
   mapArguments<GNewArguments extends readonly unknown[]>(
-    mapFnc: MapFunctionArguments<GArguments, GNewArguments>,
+    mapFnc: MapFunctionArguments<GNewArguments, GArguments>,
   ): AsyncFunction<GNewArguments, GReturn> {
     return new AsyncFunction<GNewArguments, GReturn>(
       (signal: AbortSignal, ...args: GNewArguments): PromiseLike<GReturn> | GReturn => {

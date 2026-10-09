@@ -175,7 +175,7 @@ Applies a transformation function to the current instance and returns the result
 
 ```ts
 mapArguments<GNewArguments extends readonly unknown[]>(
-  mapFnc: MapFunctionArguments<GArguments, GNewArguments>,
+  mapFnc: MapFunctionArguments<GNewArguments, GArguments>,
 ): AsyncFunction<GNewArguments, GReturn>
 ```
 

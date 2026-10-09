@@ -1,6 +1,6 @@
 {
   "name": "@xstd/async-function",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "type": "module",
   "description": "Universal API around async functions",
   "keywords": [],
@@ -46,6 +46,7 @@
     "type": "lib"
   },
   "dependencies": {
-    "@xstd/abortable": "^1.2.3"
+    "@xstd/abortable": "^1.2.3",
+    "@xstd/map-function": "^1.0.0"
   }
 }

@@ -974,6 +974,7 @@ __metadata:
     "@types/node": "npm:^26.5.0"
     "@vitest/coverage-istanbul": "npm:^5.0.0"
     "@xstd/abortable": "npm:^1.2.3"
+    "@xstd/map-function": "npm:^1.0.0"
     fabrique: "npm:2.0.18"
     prettier: "npm:^3.9.6"
     prettier-plugin-organize-imports: "npm:^4.3.0"
@@ -983,6 +984,13 @@ __metadata:
     vitest: "npm:^5.0.0"
   languageName: unknown
   linkType: soft
+
+"@xstd/map-function@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "@xstd/map-function@npm:1.0.0"
+  checksum: 10c0/953337e3f7447aaf59849cf317a03f2fe4829601406266a10e71a22277ca945c76c5bfa1ea6ef139bf7feba298e20f9420d408a3f1fece7e06a40b2af2c276fd
+  languageName: node
+  linkType: hard
 
 "abbrev@npm:^5.0.0":
   version: 5.0.0
