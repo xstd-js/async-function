@@ -2,22 +2,6 @@ import { sleep } from '@xstd/abortable';
 import { describe, expect, it, vi } from 'vitest';
 import { AsyncFunction } from './async-function.ts';
 
-interface Deferred<GValue> {
-  readonly promise: Promise<GValue>;
-  readonly resolve: (value: GValue) => void;
-  readonly reject: (error: unknown) => void;
-}
-
-function createDeferred<GValue>(): Deferred<GValue> {
-  let resolve!: (value: GValue) => void;
-  let reject!: (error: unknown) => void;
-  const promise: Promise<GValue> = new Promise<GValue>((_resolve, _reject) => {
-    resolve = _resolve;
-    reject = _reject;
-  });
-  return { promise, resolve, reject };
-}
-
 describe('AsyncFunction', () => {
   const NEVER_ABORTED = new AbortController().signal;
 
@@ -285,7 +269,7 @@ describe('AsyncFunction', () => {
 
     describe('shareConcurentCalls', () => {
       it('should share concurrent calls with the same key', async () => {
-        const deferred: Deferred<number> = createDeferred<number>();
+        const deferred = Promise.withResolvers<number>();
         const callValues: string[] = [];
 
         const fnc = new AsyncFunction<[string], number>(
@@ -307,8 +291,8 @@ describe('AsyncFunction', () => {
       });
 
       it('should not share concurrent calls with different keys', async () => {
-        const firstDeferred: Deferred<number> = createDeferred<number>();
-        const secondDeferred: Deferred<number> = createDeferred<number>();
+        const firstDeferred = Promise.withResolvers<number>();
+        const secondDeferred = Promise.withResolvers<number>();
         const callValues: string[] = [];
 
         const fnc = new AsyncFunction<[string], number>(
@@ -363,7 +347,7 @@ describe('AsyncFunction', () => {
       });
 
       it('should keep the shared call running when one of multiple consumers aborts', async () => {
-        const deferred: Deferred<number> = createDeferred<number>();
+        const deferred = Promise.withResolvers<number>();
         let callSignal!: AbortSignal;
 
         const fnc = new AsyncFunction<[string], number>(
@@ -389,7 +373,7 @@ describe('AsyncFunction', () => {
       });
 
       it('should abort the shared call when the only consumer aborts, and start a new one afterwards', async () => {
-        const deferred: Deferred<number> = createDeferred<number>();
+        const deferred = Promise.withResolvers<number>();
         let callCount = 0;
         let callSignal!: AbortSignal;
 
@@ -417,7 +401,7 @@ describe('AsyncFunction', () => {
       });
 
       it('should start a new underlying call once all consumers settled', async () => {
-        const deferred: Deferred<number> = createDeferred<number>();
+        const deferred = Promise.withResolvers<number>();
         let callCount = 0;
 
         const fnc = new AsyncFunction<[string], number>(
