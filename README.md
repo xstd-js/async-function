@@ -42,7 +42,7 @@ const fetchUser = fetchJson
   });
 
 // deduplicate concurrent calls for the same key:
-const getUser = fetchUser.shareConcurentCalls({ keyGenerator: ([id]) => id as string });
+const getUser = fetchUser.shareConcurrentCalls({ keyGenerator: ([id]) => id as string });
 
 const controller = new AbortController();
 const user = await getUser.call(controller.signal, '42');
@@ -253,10 +253,10 @@ const safe = fnc.catch((error) => null);
 const result = await safe.call(signal); // Response, or null if the request failed
 ```
 
-##### `shareConcurentCalls` (experimental)
+##### `shareConcurrentCalls` (experimental)
 
 ```ts
-shareConcurentCalls(options: ShareConcurentCallsOptions<GArguments>): AsyncFunction<GArguments, GReturn>
+shareConcurrentCalls(options: ShareConcurrentCallsOptions<GArguments>): AsyncFunction<GArguments, GReturn>
 ```
 
 Returns a new async function that deduplicates concurrent calls sharing the same key: while a call is in-flight, subsequent calls with the same key await the same underlying promise instead of triggering a new call.
@@ -270,7 +270,7 @@ The first call starts the underlying call with its own `AbortController`. Each c
 ```ts
 const loadUser = new AsyncFunction(async (signal, id: string) =>
   fetchUser(id, { signal }),
-).shareConcurentCalls({ keyGenerator: ([id]) => id });
+).shareConcurrentCalls({ keyGenerator: ([id]) => id });
 
 // 'fetchUser' is called once, both calls await the same result:
 const [a, b] = await Promise.all([loadUser.call(signal, 'a'), loadUser.call(signal, 'a')]);

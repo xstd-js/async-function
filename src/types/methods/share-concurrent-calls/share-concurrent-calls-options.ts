@@ -1,13 +1,13 @@
 /**
- * Options for the `AsyncFunction.shareConcurentCalls` method.
+ * Options for the `AsyncFunction.shareConcurrentCalls` method.
  *
  * @template GArguments The tuple type representing the arguments to be provided to the function.
  */
-export interface ShareConcurentCallsOptions<GArguments extends readonly unknown[]> {
+export interface ShareConcurrentCallsOptions<GArguments extends readonly unknown[]> {
   /**
    * Generates a cache key from the call's arguments. Concurrent calls producing the same key share their result.
    */
-  readonly keyGenerator: ShareConcurentCallsKeyGenerator<GArguments>;
+  readonly keyGenerator: ShareConcurrentCallsKeyGenerator<GArguments>;
 }
 
 /**
@@ -18,6 +18,6 @@ export interface ShareConcurentCallsOptions<GArguments extends readonly unknown[
  * @param {...GArguments} args The arguments to be provided to the function.
  * @returns {string} The key identifying concurrent calls to share.
  */
-export interface ShareConcurentCallsKeyGenerator<GArguments extends readonly unknown[]> {
+export interface ShareConcurrentCallsKeyGenerator<GArguments extends readonly unknown[]> {
   (args: GArguments): string;
 }

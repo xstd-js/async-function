@@ -267,7 +267,7 @@ describe('AsyncFunction', () => {
       });
     });
 
-    describe('shareConcurentCalls', () => {
+    describe('shareConcurrentCalls', () => {
       it('should share concurrent calls with the same key', async () => {
         const deferred = Promise.withResolvers<number>();
         const callValues: string[] = [];
@@ -277,7 +277,7 @@ describe('AsyncFunction', () => {
             callValues.push(value);
             return deferred.promise;
           },
-        ).shareConcurentCalls({ keyGenerator: ([value]) => value });
+        ).shareConcurrentCalls({ keyGenerator: ([value]) => value });
 
         const firstPromise = fnc.call(NEVER_ABORTED, 'a');
         const secondPromise = fnc.call(NEVER_ABORTED, 'a');
@@ -300,7 +300,7 @@ describe('AsyncFunction', () => {
             callValues.push(value);
             return value === 'a' ? firstDeferred.promise : secondDeferred.promise;
           },
-        ).shareConcurentCalls({ keyGenerator: ([value]) => value });
+        ).shareConcurrentCalls({ keyGenerator: ([value]) => value });
 
         const firstPromise = fnc.call(NEVER_ABORTED, 'a');
         const secondPromise = fnc.call(NEVER_ABORTED, 'b');
@@ -322,7 +322,7 @@ describe('AsyncFunction', () => {
             callCount++;
             return value.length;
           },
-        ).shareConcurentCalls({ keyGenerator: ([value]) => value });
+        ).shareConcurrentCalls({ keyGenerator: ([value]) => value });
 
         await expect(fnc.call(AbortSignal.abort('abort'), 'a')).rejects.toThrow('abort');
 
@@ -335,7 +335,7 @@ describe('AsyncFunction', () => {
         const fnc = new AsyncFunction<[string], number>(async (): Promise<number> => {
           callCount++;
           throw 'error';
-        }).shareConcurentCalls({ keyGenerator: ([value]) => value });
+        }).shareConcurrentCalls({ keyGenerator: ([value]) => value });
 
         const firstPromise = fnc.call(NEVER_ABORTED, 'a');
         const secondPromise = fnc.call(NEVER_ABORTED, 'a');
@@ -355,7 +355,7 @@ describe('AsyncFunction', () => {
             callSignal = signal;
             return deferred.promise;
           },
-        ).shareConcurentCalls({ keyGenerator: ([value]) => value });
+        ).shareConcurrentCalls({ keyGenerator: ([value]) => value });
 
         const abortController = new AbortController();
         const abortedPromise = fnc.call(abortController.signal, 'a');
@@ -383,7 +383,7 @@ describe('AsyncFunction', () => {
             callSignal = signal;
             return deferred.promise;
           },
-        ).shareConcurentCalls({ keyGenerator: ([value]) => value });
+        ).shareConcurrentCalls({ keyGenerator: ([value]) => value });
 
         const abortController = new AbortController();
         const promise = fnc.call(abortController.signal, 'a');
@@ -409,7 +409,7 @@ describe('AsyncFunction', () => {
             callCount++;
             return deferred.promise;
           },
-        ).shareConcurentCalls({ keyGenerator: ([value]) => value });
+        ).shareConcurrentCalls({ keyGenerator: ([value]) => value });
 
         const firstPromise = fnc.call(NEVER_ABORTED, 'a');
 
