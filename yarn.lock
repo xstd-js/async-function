@@ -1061,7 +1061,7 @@ __metadata:
     "@typescript/native": "npm:typescript@^7.0.2"
     "@vitest/coverage-istanbul": "npm:^5.1.0"
     "@xstd/abortable": "npm:^1.2.3"
-    "@xstd/map-function": "npm:^1.0.0"
+    "@xstd/map-function": "npm:^1.3.0"
     fabrique: "npm:2.0.36"
     prettier: "npm:^3.10.1"
     prettier-plugin-organize-imports: "npm:^4.3.0"
@@ -1072,10 +1072,10 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@xstd/map-function@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "@xstd/map-function@npm:1.0.0"
-  checksum: 10c0/953337e3f7447aaf59849cf317a03f2fe4829601406266a10e71a22277ca945c76c5bfa1ea6ef139bf7feba298e20f9420d408a3f1fece7e06a40b2af2c276fd
+"@xstd/map-function@npm:^1.3.0":
+  version: 1.3.0
+  resolution: "@xstd/map-function@npm:1.3.0"
+  checksum: 10c0/422b11e8d9b3b8a10bf79aa62f5565f5091417c26246a5df401f72ef35eb13f3948d563370e4064f6c21f507d93d3a28ba770fc80311dbb643bf107024be5dbe
   languageName: node
   linkType: hard
 
