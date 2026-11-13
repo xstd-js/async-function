@@ -2,7 +2,7 @@ import { abortify } from '@xstd/abortable';
 import type { MapFunctionArguments } from '@xstd/map-function';
 import { type AsyncFunctionLike } from './types/async-function-like.ts';
 import { type CallAsyncFunction } from './types/call-async-function.ts';
-import { type ShareConcurentCallsOptions } from './types/methods/share-concurent-calls/share-concurent-calls-options.js';
+import { type ShareConcurrentCallsOptions } from './types/methods/share-concurrent-calls/share-concurrent-calls-options.ts';
 import { type AsyncFunctionThenOnFulfilledFunction } from './types/methods/then/async-function.then.on-fulfilled-function.ts';
 import { type AsyncFunctionThenOnRejectedFunction } from './types/methods/then/async-function.then.on-rejected-function.ts';
 import { DEFAULT_ASYNC_FUNCTION_THEN_ON_FULFILLED_FUNCTION } from './types/methods/then/default.async-function.then.on-fulfilled-function.private.ts';
@@ -279,22 +279,22 @@ export class AsyncFunction<GArguments extends readonly unknown[], GReturn> {
    * The first call starts the underlying call with its own `AbortController`. Each caller may abort its own wait without affecting the shared call. When the last consumer settles, the shared controller is aborted, the entry is removed, and a subsequent call starts a new one.
    *
    * @experimental
-   * @param {ShareConcurentCallsOptions<GArguments>} options Configuration object.
-   * @param {ShareConcurentCallsKeyGenerator<GArguments>} options.keyGenerator A function that generates a cache key from the call's arguments. Calls producing the same key share their result.
+   * @param {ShareConcurrentCallsOptions<GArguments>} options Configuration object.
+   * @param {ShareConcurrentCallsKeyGenerator<GArguments>} options.keyGenerator A function that generates a cache key from the call's arguments. Calls producing the same key share their result.
    * @returns {AsyncFunction<GArguments, GReturn>} A new async function sharing concurrent calls with identical keys.
    *
    * @example
    * ```ts
    * const loadUser = new AsyncFunction(async (signal, id: string) => fetchUser(id, { signal }))
-   *   .shareConcurentCalls({ keyGenerator: ([id]) => id });
+   *   .shareConcurrentCalls({ keyGenerator: ([id]) => id });
    *
    * // 'fetchUser' is called once, both calls await the same result:
    * const [a, b] = await Promise.all([loadUser.call(signal, 'a'), loadUser.call(signal, 'a')]);
    * ```
    */
-  shareConcurentCalls({
+  shareConcurrentCalls({
     keyGenerator,
-  }: ShareConcurentCallsOptions<GArguments>): AsyncFunction<GArguments, GReturn> {
+  }: ShareConcurrentCallsOptions<GArguments>): AsyncFunction<GArguments, GReturn> {
     interface Entry {
       readonly controller: AbortController;
       readonly promise: Promise<GReturn>;
